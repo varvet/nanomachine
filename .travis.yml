@@ -1,5 +1,4 @@
 rvm:
-  - "ruby-2.0.0-preview1"
   - "1.9.3"
   - "1.9.2"
   - "jruby-19mode"

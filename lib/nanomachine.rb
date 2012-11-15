@@ -3,6 +3,26 @@ require "set"
 
 # A minimal state machine where you transition between states, instead
 # of transition by input symbols or events.
+#
+# @example
+#   state_machine = Nanomachine.new("unpublished") do |fsm|
+#     fsm.transition("published", %w[unpublished processing removed])
+#     fsm.transition("unpublished", %w[published processing removed])
+#     fsm.transition("processing", %w[published unpublished])
+#     fsm.transition("removed", []) # defined for being explicit
+#
+#     fsm.on_transition do |(from_state, to_state)|
+#       update_column(:state, to_state)
+#     end
+#   end
+#
+#   if state_machine.transition_to("published")
+#     puts "Publish success!"
+#   else
+#     puts "Publish failure! We’re in #{state_machine.state}."
+#   end
+#
+#
 class Nanomachine
   # Raised when a transition cannot be performed.
   InvalidTransitionError = Class.new(StandardError)
@@ -55,9 +75,10 @@ class Nanomachine
   # @example
   #   fsm.transition("green", %w[orange red])
   #   fsm.transition("orange", %w[red])
+  #   fsm.transition(:error, [:nowhere])
   #
-  # @param [#to_s] source
-  # @param [#each] targets each target must respond to #to_s
+  # @param [#to_s] from
+  # @param [#each] to each target state must respond to #to_s
   def transition(from, to)
     transitions[from.to_s] = Set.new(to).map!(&:to_s)
   end
@@ -116,9 +137,8 @@ class Nanomachine
   # @example transition to error state with a message given to any callbacks
   #   fsm.transition_to("error", "something went really wrong") # => "green"
   #
-  # @note all additional arguments, and the block, are passed to state machine callbacks
   # @param [#to_s] other_state
-  # @param *args
+  # @param args any number of arguments, passed to callbacks
   # @return [String, false] state the machine was in before transition, or false if transition is not allowed
   def transition_to(other_state, *args, &block)
     other_state &&= other_state.to_s

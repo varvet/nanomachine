@@ -49,7 +49,7 @@ class Nanomachine
   #     end
   #   end
   #
-  # @param [#to_s] initial_state
+  # @param [#to_s] initial_state state the machine is in after initialization
   # @raise [InvalidStateError] if initial state is nil
   # @yield [self] yields the machine for easy definition of states
   # @yieldparam [Nanomachine] self
@@ -64,9 +64,14 @@ class Nanomachine
     yield self if block_given?
   end
 
-  # @return [String] state
+  # @return [String] current state of the state machine.
   attr_reader :state
 
+  # @example
+  #   {"initial"=>#<Set: {"green", "orange"}>,
+  #    "green"=>#<Set: {"orange", "error"}>,
+  #    "orange"=>#<Set: {"green", "error"}>}
+  #
   # @return [Hash<String, Set>] mapping of state to possible transition targets
   attr_reader :transitions
 
@@ -135,10 +140,15 @@ class Nanomachine
   # Transition the state machine from the current state to a target state.
   #
   # @example transition to error state with a message given to any callbacks
-  #   fsm.transition_to("error", "something went really wrong") # => "green"
+  #   if previous_state = fsm.transition_to("error", "something went really wrong")
+  #     puts "Transition from #{previous_state} to #{fsm.state} successful!"
+  #   else
+  #     puts "Transition failed."
+  #   end
   #
-  # @param [#to_s] other_state
-  # @param args any number of arguments, passed to callbacks
+  # @param [#to_s] other_state new state to transition to
+  # @param args any number of arguments, passed to callbacks defined with {#on_transition}
+  # @param block passed to callbacks defined with {#on_transition}
   # @return [String, false] state the machine was in before transition, or false if transition is not allowed
   def transition_to(other_state, *args, &block)
     other_state &&= other_state.to_s
@@ -161,7 +171,7 @@ class Nanomachine
   #   fsm.transition_to!("bogus state") # => InvalidTransitionError
   #
   # @param (see #transition_to)
-  # @return (see #transition_to)
+  # @return [String] the state the state machine was in before transition
   # @raise [InvalidTransitionError] if the state machine cannot transition from current state to target state
   def transition_to!(other_state)
     if previous_state = transition_to(other_state)

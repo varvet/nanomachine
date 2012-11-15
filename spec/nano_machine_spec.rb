@@ -11,19 +11,19 @@ describe "Nanomachine state machine" do
       m.transition("D", %w[])
       m.transition("E", %w[B C])
 
-      m.on_transition(to: "B") do |*args, &block|
+      m.on_transition(:to => "B") do |*args, &block|
         @callbacks << [:to, args, block]
       end
 
-      m.on_transition(from: "A") do |*args, &block|
+      m.on_transition(:from => "A") do |*args, &block|
         @callbacks << [:from, args, block]
       end
 
-      m.on_transition(from: "A", to: "B") do |*args, &block|
+      m.on_transition(:from => "A", :to => "B") do |*args, &block|
         @callbacks << [:from_to, args, block]
       end
 
-      m.on_transition(from: "E", to: "C") do |*args, &block|
+      m.on_transition(:from => "E", :to => "C") do |*args, &block|
         @callbacks << [:from_to_e, args, block]
       end
 
@@ -61,7 +61,7 @@ describe "Nanomachine state machine" do
 
   describe "#on_transition" do
     it "raises an error when given unknown options" do
-      expect { fsm.on_transition(bad_option: "foo") { } }.to raise_error(ArgumentError, /bad_option/)
+      expect { fsm.on_transition(:bad_option => "foo") { } }.to raise_error(ArgumentError, /bad_option/)
     end
 
     it "raises an error when given no block" do

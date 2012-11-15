@@ -36,7 +36,7 @@ Gem::Specification.new do |gem|
 
   gem.version       = Nanomachine::VERSION
 
-  gem.homepage      = ""
+  gem.homepage      = "https://github.com/elabs/nanomachine"
   gem.authors       = ["Ivan Navarrete", "Kim Burgestrand"]
   gem.email         = ["crzivn@gmail.com", "kim@burgestrand.se"]
   gem.license       = "MIT License"

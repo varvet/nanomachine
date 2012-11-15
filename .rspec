@@ -1,0 +1,2 @@
+-Ilib
+--require ./spec/spec_helper

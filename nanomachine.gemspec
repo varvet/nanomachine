@@ -8,9 +8,10 @@ Gem::Specification.new do |gem|
   gem.summary       = "A really tiny state machine for ruby. No events, only acceptable transitions and transition callbacks."
   gem.description   = <<-DESCRIPTION.gsub(/^ */, "")
     A really tiny state machine for ruby. No events, only accepted transitions and transition callbacks.
-    The difference between Nanomachine and Micromachine is that Micromachine transitions to new states
-    in response to events; multiple events can transition between the two same states. Nanomachine, on
-    the other hand, does not care about events, and only needs the state you want to be in after successful
+
+    The difference between Nanomachine, and otherwise known Micromachine (https://rubygems.org/gems/micromachine) is that
+    Micromachine transitions to new states in response to events; multiple events can transition between the two same states.
+    Nanomachine, on the other hand, does not care about events, and only needs the state you want to be in after successful
     transition.
 
     Nanomachine can be used in any ruby project, and have no runtime dependencies.

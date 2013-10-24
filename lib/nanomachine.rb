@@ -1,5 +1,6 @@
 require "nanomachine/version"
 require "set"
+require "monitor"
 
 # A minimal state machine where you transition between states, instead
 # of transition by input symbols or events.
@@ -154,9 +155,9 @@ class Nanomachine
     other_state &&= other_state.to_s
     if transitions[state].include?(other_state)
       previous_state, @state = @state, other_state
-      [[nil, nil], [previous_state, nil], [nil, @state], [previous_state, @state]].each do |combo|
+      [[nil, nil], [previous_state, nil], [nil, other_state], [previous_state, other_state]].each do |combo|
         @callbacks[combo].each do |callback|
-          callback.call([previous_state, @state], *args, &block)
+          callback.call([previous_state, other_state], *args, &block)
         end
       end
       previous_state

@@ -1,5 +1,7 @@
 # Nanomachine
 
+[![Build Status](https://travis-ci.org/elabs/nanomachine.svg?branch=master)](http://travis-ci.org/elabs/nanomachine)
+
 A really tiny state machine for ruby. No events, only accepted transitions and transition callbacks.
 
 The difference between Nanomachine, and otherwise known Micromachine (https://rubygems.org/gems/micromachine) is that

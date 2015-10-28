@@ -39,7 +39,7 @@ describe "Nanomachine state machine" do
 
   describe "#initialize" do
     it "raises an error if given an invalid initial state" do
-      expect { Nanomachine.new(nil) }.to raise_error(Nanomachine::InvalidStateError, /initial state/)
+      expect { Nanomachine.new(nil) }.to raise_error(Nanomachine::InvalidStateError)
     end
   end
 
@@ -85,6 +85,10 @@ describe "Nanomachine state machine" do
 
     it "returns false if transition failed" do
       fsm.transition_to("D").should be_falsy
+    end
+
+    it "raises a type error if state is nil" do
+      expect { fsm.transition_to(nil) }.to raise_error(Nanomachine::InvalidStateError)
     end
 
     context "callbacks" do
@@ -158,6 +162,24 @@ describe "Nanomachine state machine" do
 
     it "returns the previous state on success" do
       fsm.transition_to!("B").should eq "A"
+    end
+
+    it "raises a type error if state is nil" do
+      expect { fsm.transition_to!(nil) }.to raise_error(Nanomachine::InvalidStateError)
+    end
+  end
+
+  describe "#transition_to?" do
+    it "returns false if it cannot transition to the given state" do
+      fsm.transition_to?("D").should be_falsy
+    end
+
+    it "returns true if it can transition to the given state" do
+      fsm.transition_to?("B").should be_truthy
+    end
+
+    it "raises a type error if state is nil" do
+      expect { fsm.transition_to?(nil) }.to raise_error(Nanomachine::InvalidStateError)
     end
   end
 end

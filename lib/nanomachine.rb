@@ -55,11 +55,7 @@ class Nanomachine
   # @yield [self] yields the machine for easy definition of states
   # @yieldparam [Nanomachine] self
   def initialize(initial_state)
-    if initial_state.nil?
-      raise InvalidStateError, "initial state cannot be nil"
-    end
-
-    @state = initial_state.to_s
+    @state = to_state(initial_state)
     @transitions = Hash.new(Set.new)
     @callbacks = Hash.new { |h, k| h[k] = [] }
     yield self if block_given?
@@ -86,7 +82,7 @@ class Nanomachine
   # @param [#to_s] from
   # @param [#each] to each target state must respond to #to_s
   def transition(from, to)
-    transitions[from.to_s] = Set.new(to).map!(&:to_s)
+    transitions[to_state(from)] = Set.new(to).map! { |state| to_state(state) }
   end
 
   # Define a callback to be executed on transition.
@@ -126,10 +122,10 @@ class Nanomachine
     end
 
     from = options.delete(:from)
-    from &&= from.to_s
+    from &&= to_state(from)
 
     to = options.delete(:to)
-    to &&= to.to_s
+    to &&= to_state(to)
 
     unless options.empty?
       raise ArgumentError, "unknown options: #{options.keys.join(", ")}"
@@ -152,8 +148,8 @@ class Nanomachine
   # @param block passed to callbacks defined with {#on_transition}
   # @return [String, false] state the machine was in before transition, or false if transition is not allowed
   def transition_to(other_state, *args, &block)
-    other_state &&= other_state.to_s
-    if transitions[state].include?(other_state)
+    if transition_to?(other_state)
+      other_state = to_state(other_state)
       previous_state, @state = @state, other_state
       [[nil, nil], [previous_state, nil], [nil, other_state], [previous_state, other_state]].each do |combo|
         @callbacks[combo].each do |callback|
@@ -179,6 +175,27 @@ class Nanomachine
       previous_state
     else
       raise InvalidTransitionError, "cannot transition from #{state.inspect} to #{other_state.inspect}"
+    end
+  end
+
+  # Query to see if it's possible to transition to the given state.
+  #
+  # @example
+  #   fsm.transition_to?("state") # => true
+  #
+  # @param (see #transition_to)
+  # @return [Boolean]
+  def transition_to?(other_state)
+    transitions[state].include?(to_state(other_state))
+  end
+
+  private
+
+  def to_state(state)
+    if state.nil?
+      raise InvalidStateError, "state cannot be nil"
+    else
+      state.to_s
     end
   end
 end

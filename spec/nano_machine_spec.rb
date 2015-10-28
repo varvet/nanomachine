@@ -76,7 +76,7 @@ describe "Nanomachine state machine" do
 
     it "does not transition when the transition is undefined" do
       fsm.transition_to("X")
-      expect { fsm.transition_to("A").should be_false }.to_not change { fsm.state }
+      expect { fsm.transition_to("A").should be_falsy }.to_not change { fsm.state }
     end
 
     it "returns the previous state" do
@@ -84,7 +84,7 @@ describe "Nanomachine state machine" do
     end
 
     it "returns false if transition failed" do
-      fsm.transition_to("D").should be_false
+      fsm.transition_to("D").should be_falsy
     end
 
     context "callbacks" do
@@ -144,7 +144,7 @@ describe "Nanomachine state machine" do
       end
 
       it "executes no callbacks on failed transitions" do
-        fsm.transition_to("D").should be_false
+        fsm.transition_to("D").should be_falsy
         @callbacks.should be_empty
       end
     end

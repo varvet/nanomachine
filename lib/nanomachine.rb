@@ -1,6 +1,5 @@
 require "nanomachine/version"
 require "set"
-require "monitor"
 
 # A minimal state machine where you transition between states, instead
 # of transition by input symbols or events.
